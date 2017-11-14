@@ -17,15 +17,8 @@ fs.readdir('./events/', (err, files) => {
 });
 
 client.on("message", async (message) => {
-    if (message.author.bot) return;
-    if (message.channel.type === 'dm') return; // so users cant try to use voice channel in dms as voice channels dont exist
-    if (message.content.indexOf(config.prefix) !== 0) return;
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-    const command = args.shift().toLowerCase();
-    try {
-        let commandFile = require(`./commands/${command}.js`);
-        commandFile.run(client, message, args);
-    } catch (err) {
-        return;
-    }
+       
+	if (command === "play") {
+	// test
+	}
 });
