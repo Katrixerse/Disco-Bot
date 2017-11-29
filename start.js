@@ -19,6 +19,6 @@ fs.readdir('./events/', (err, files) => {
 client.on("message", async (message) => {
        
 	if (command === "play") {
-	// test
+	// test sdfsdf
 	}
 });
