@@ -19,6 +19,10 @@ fs.readdir('./events/', (err, files) => {
 client.on("message", async (message) => {
        
 	if (command === "play") {
-	// test sdfsdf
+	if (queue[message.guild.id] === undefined) return message.channel.sendMessage(`Add some songs to the queue first with ${tokens.prefix}add`);
+		if (!message.guild.voiceConnection) return commands.join(]message).then(() => commands.play(]message));
+		if (queue[message.guild.id].playing) return message.channel.sendMessage('Already Playing');
+		let dispatcher;
+		queue[message.guild.id].playing = true;
 	}
 });
