@@ -3,7 +3,7 @@ const client = new Discord.Client();
 const YoutubeDL = require('youtube-dl');
 const ytdl = require('ytdl-core');
 const sql = require("sqlite");
-sql.open("./assets/guildsettings.sqlite");
+sql.open("./assets/db.sqlite");
 
 const config = require("./assets/config.json");
 
@@ -19,9 +19,9 @@ fs.readdir('./events/', (err, files) => {
 client.on("message", async (message) => {
        
 	if (command === "play") {
-	if (queue[message.guild.id] === undefined) return message.channel.sendMessage(`Add some songs to the queue first with ${tokens.prefix}add`);
+	if (queue[message.guild.id] === undefined) return message.channel.send(`Add some songs to the queue first with ${tokens.prefix}add`);
 		if (!message.guild.voiceConnection) return commands.join(]message).then(() => commands.play(]message));
-		if (queue[message.guild.id].playing) return message.channel.sendMessage('Already Playing');
+		if (queue[message.guild.id].playing) return message.channel.send('Already Playing');
 		let dispatcher;
 		queue[message.guild.id].playing = true;
 	}
