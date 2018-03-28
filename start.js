@@ -55,7 +55,7 @@ client.on("message", async (message) => {
 	if (message.channel.type === 'dm') return;
 	if (!message.guild.member(client.user).hasPermission('SEND_MESSAGES')) return;
 	if (!message.guild.member(client.user).hasPermission('VIEW_CHANNEL')) return;
-	if (!message.guild.member(client.user).hasPermission('READ_MESSAGE_HISTORY')) return;
+	
 
 	sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(async (row) => {
 		if (!row) return;
