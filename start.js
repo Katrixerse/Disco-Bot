@@ -219,7 +219,7 @@ client.on("message", async (message) => {
 			if (newprefixfix.length < 1) return message.channel.send("Prefix can't have ascii characters")
 			if (newprefix.length > 7) return message.channel.send("prefix can't be longer then 7 characters")
 			sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(row => {
-				sql.run(`UPDATE scores SET prefix = "${newprefixfix}"1} WHERE guildId = ${message.guild.id}`);
+				sql.run(`UPDATE scores SET prefix = "${newprefixfix}" WHERE guildId = ${message.guild.id}`);
 				message.channel.send("I have set the new guild prefix to " + newprefix)
 				let modlog = message.guild.channels.find('name', logschannel);
 				const embed = new Discord.RichEmbed()
