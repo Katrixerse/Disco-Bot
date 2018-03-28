@@ -27,11 +27,11 @@ client.on('reconnecting', () => console.warn('Reconnecting...'))
 
 client.on('ready', () => {
 	client.user.setPresence({
-        game: {
-            name: `${client.guilds.size} servers`, // Change what the bot is watching or playing.
-            type: 3 // 0 for playing, 1 for streaming, 2 for listening and 3 for watching.
-        }
-    });
+		game: {
+			name: `${client.guilds.size} servers`, // Change what the bot is watching or playing.
+			type: 3 // 0 for playing, 1 for streaming, 2 for listening and 3 for watching.
+		}
+	});
 	console.log('ready!');
 });
 
@@ -55,7 +55,7 @@ client.on("message", async (message) => {
 	if (message.channel.type === 'dm') return;
 	if (!message.guild.member(client.user).hasPermission('SEND_MESSAGES')) return;
 	if (!message.guild.member(client.user).hasPermission('VIEW_CHANNEL')) return;
-	
+
 
 	sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(async (row) => {
 		if (!row) return;
@@ -65,7 +65,7 @@ client.on("message", async (message) => {
 		if (message.content.indexOf(prefix) !== 0) return;
 		const args = message.content.slice(prefix.length).trim().split(/ +/g);
 		const command = args.shift().toLowerCase();
-		
+
 		if (command === "play") {
 			if (!message.guild.member(client.user).hasPermission('CONNECT')) return message.reply('Sorry, i dont have the perms to do this cmd i need CONNECT. :x:')
 			if (!message.guild.member(client.user).hasPermission('SPEAK')) return message.reply('Sorry, i dont have the perms to do this cmd i need SPEAK. :x:')
@@ -151,15 +151,15 @@ client.on("message", async (message) => {
 		}
 
 		if (command === "join") {
-				const voiceChannel = message.member.voiceChannel;
-				if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t connect to your voice channel...');
-				voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
+			const voiceChannel = message.member.voiceChannel;
+			if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t connect to your voice channel...');
+			voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
 		}
 
 		if (command === "leave") {
-				const voiceChannel = message.member.voiceChannel;
-				if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t leave your voice channel...');
-				voiceChannel.leave()
+			const voiceChannel = message.member.voiceChannel;
+			if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t leave your voice channel...');
+			voiceChannel.leave()
 		}
 
 		if (command === "queue") {
@@ -209,18 +209,20 @@ client.on("message", async (message) => {
 
 		if (command === "help") {
 			const embed = new Discord.RichEmbed()
-			.setColor(0x738BD7)
-			.setTitle("Commands list")
-			.addField("add [query/url]", "Will add a song to the queue.")
-			.addField("play ", "Will play the song(s) in the queue.")
-			.addField("volume [number] ", "Will set the volume to [number].")
-			.addField("pause ", "Will pause the current playing song. the volume to [number].")
-			.addField("resume", "Will resume the last playing song.")
-			.addField("queue", "Will send all the current songs in the queue.")
-			.addField("clearqueue", "Will remove all the current songs in the queue.")
-			.addField("join", "Will join the current voice channel your in.")
-			.addField("leave", "Will leave the current voice channel your in.")
-		message.author.send({embed})
+				.setColor(0x738BD7)
+				.setTitle("Commands list")
+				.addField("add [query/url]", "Will add a song to the queue.")
+				.addField("play ", "Will play the song(s) in the queue.")
+				.addField("volume [number] ", "Will set the volume to [number].")
+				.addField("pause ", "Will pause the current playing song. the volume to [number].")
+				.addField("resume", "Will resume the last playing song.")
+				.addField("queue", "Will send all the current songs in the queue.")
+				.addField("clearqueue", "Will remove all the current songs in the queue.")
+				.addField("join", "Will join the current voice channel your in.")
+				.addField("leave", "Will leave the current voice channel your in.")
+			message.author.send({
+				embed
+			})
 		}
 
 		if (command === "prefix") {
@@ -228,9 +230,9 @@ client.on("message", async (message) => {
 			const newprefix = args[0]
 			const newprefixfix = newprefix.replace(/[^\x00-\x7F]/g, "");
 			if (newprefix.length < 1) return message.channel.send("Didn't provide a new prefix to set")
-            var asciic = /[^\x00-\x7F]/g;
-            const result = asciic.test(newprefix)
-            if (result === true) return message.channel.send("Prefix cant include ascii characters.")
+			var asciic = /[^\x00-\x7F]/g;
+			const result = asciic.test(newprefix)
+			if (result === true) return message.channel.send("Prefix cant include ascii characters.")
 			if (newprefix.length > 7) return message.channel.send("prefix can't be longer then 7 characters")
 			sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(row => {
 				sql.run(`UPDATE scores SET prefix = "${newprefixfix}" WHERE guildId = ${message.guild.id}`);
