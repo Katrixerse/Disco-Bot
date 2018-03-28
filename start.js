@@ -119,9 +119,9 @@ client.on("message", async (message) => {
 					type: 'video',
 					maxResults: 1,
 					q: query,
-					safeSearch: 'strict',
+					safeSearch: 'strict', // Dont want users playing 18+ vids
 					order: 'relevance',
-					videoDuration: 'medium',
+					videoDuration: 'medium', // Can be changed to short, medium or long, i set it to medium so users couldnt play music over 20mins 
 					key: "Google api key"
 				});
 			if (!body.items.length) return message.channel.send('No results found for ' + query + ".");
