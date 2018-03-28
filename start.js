@@ -7,7 +7,7 @@ const client = new Discord.Client();
 const logschannel = "mod-logs" // change this too the logs channel you want to use.
 let dispatcher;
 
-if (!Number(process.version.slice(1).split(".")[0]) < 8) {
+if (!Number(process.version.slice(1).split(".")[0]) <= 8) {
 	console.log("Node 8.0.0 or higher is required. Update Node on your system.");
 }
 
