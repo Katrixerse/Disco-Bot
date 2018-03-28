@@ -151,19 +151,15 @@ client.on("message", async (message) => {
 		}
 
 		if (command === "join") {
-			return new Promise((resolve, reject) => {
 				const voiceChannel = message.member.voiceChannel;
 				if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t connect to your voice channel...');
 				voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
-			});
 		}
 
 		if (command === "leave") {
-			return new Promise((resolve, reject) => {
 				const voiceChannel = message.member.voiceChannel;
 				if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t leave your voice channel...');
 				voiceChannel.leave()
-			});
 		}
 
 		if (command === "queue") {
@@ -211,12 +207,30 @@ client.on("message", async (message) => {
 			message.channel.send(`Volume now set too: ${volumetoset}%`);
 		}
 
+		if (command === "help") {
+			const embed = new Discord.RichEmbed()
+			.setColor(0x738BD7)
+			.setTitle("Commands list")
+			.addField("add [query/url]", "Will add a song to the queue.")
+			.addField("play ", "Will play the song(s) in the queue.")
+			.addField("volume [number] ", "Will set the volume to [number].")
+			.addField("pause ", "Will pause the current playing song. the volume to [number].")
+			.addField("resume", "Will resume the last playing song.")
+			.addField("queue", "Will send all the current songs in the queue.")
+			.addField("clearqueue", "Will remove all the current songs in the queue.")
+			.addField("join", "Will join the current voice channel your in.")
+			.addField("leave", "Will leave the current voice channel your in.")
+		message.author.send({embed})
+		}
+
 		if (command === "prefix") {
 			if (!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("You are missing MANAGE_GUILD permission");
 			const newprefix = args[0]
 			const newprefixfix = newprefix.replace(/[^\x00-\x7F]/g, "");
 			if (newprefix.length < 1) return message.channel.send("Didn't provide a new prefix to set")
-			if (newprefixfix.length < 1) return message.channel.send("Prefix can't have ascii characters")
+            var asciic = /[^\x00-\x7F]/g;
+            const result = asciic.test(newprefix)
+            if (result === true) return message.channel.send("Prefix cant include ascii characters.")
 			if (newprefix.length > 7) return message.channel.send("prefix can't be longer then 7 characters")
 			sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(row => {
 				sql.run(`UPDATE scores SET prefix = "${newprefixfix}" WHERE guildId = ${message.guild.id}`);
