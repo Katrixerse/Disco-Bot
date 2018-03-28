@@ -4,6 +4,7 @@ const snekfetch = require('snekfetch');
 const sql = require("sqlite");
 sql.open("./assets/guildsettings.sqlite");
 const client = new Discord.Client();
+const logschannel = "mod-logs" // change this too the logs channel you want to use.
 let dispatcher;
 
 if (!Number(process.version.slice(1).split(".")[0]) < 8) {
@@ -25,22 +26,28 @@ client.on('disconnect', () => console.warn('Disconnected!'))
 client.on('reconnecting', () => console.warn('Reconnecting...'))
 
 client.on('ready', () => {
+	client.user.setPresence({
+        game: {
+            name: `${client.guilds.size} servers`, // Change what the bot is watching or playing.
+            type: 3 // 0 for playing, 1 for streaming, 2 for listening and 3 for watching.
+        }
+    });
 	console.log('ready!');
 });
 
 client.on("guildCreate", guild => {
 	console.log(`Someone added disco-bot to their discord! ${guild.name} Member count: ${guild.memberCount}!`)
-	
+
 	sql.get(`SELECT * FROM scores WHERE guildId ="${guild.id}"`).then(row => {
 		if (!row) {
-		  sql.run("INSERT INTO scores (guildId, prefix) VALUES (?, ?)", [guild.id, ">"]);
+			sql.run("INSERT INTO scores (guildId, prefix) VALUES (?, ?)", [guild.id, ">"]);
 		}
-	  }).catch(() => {
+	}).catch(() => {
 		console.error;
 		sql.run("CREATE TABLE IF NOT EXISTS scores (guildId TEXT, prefix TEXT)").then(() => {
-		  sql.run("INSERT INTO scores (guildId, prefix) VALUES (?, ?)", [message.author.id, ">"]);
+			sql.run("INSERT INTO scores (guildId, prefix) VALUES (?, ?)", [message.author.id, ">"]);
 		});
-	  });
+	});
 });
 
 client.on("message", async (message) => {
@@ -58,6 +65,7 @@ client.on("message", async (message) => {
 		if (message.content.indexOf(prefix) !== 0) return;
 		const args = message.content.slice(prefix.length).trim().split(/ +/g);
 		const command = args.shift().toLowerCase();
+		
 		if (command === "play") {
 			if (!message.guild.member(client.user).hasPermission('CONNECT')) return message.reply('Sorry, i dont have the perms to do this cmd i need CONNECT. :x:')
 			if (!message.guild.member(client.user).hasPermission('SPEAK')) return message.reply('Sorry, i dont have the perms to do this cmd i need SPEAK. :x:')
@@ -112,33 +120,35 @@ client.on("message", async (message) => {
 					msg.edit(`Added **${info.title}** to the queue`);
 				});
 			} else {
-			const { body } = await snekfetch
-				.get('https://www.googleapis.com/youtube/v3/search')
-				.query({
-					part: 'snippet',
-					type: 'video',
-					maxResults: 1,
-					q: query,
-					safeSearch: 'strict', // Dont want users playing 18+ vids
-					order: 'relevance',
-					videoDuration: 'medium', // Can be changed to short, medium or long, i set it to medium so users couldnt play music over 20mins 
-					key: "Google api key"
+				const {
+					body
+				} = await snekfetch
+					.get('https://www.googleapis.com/youtube/v3/search')
+					.query({
+						part: 'snippet',
+						type: 'video',
+						maxResults: 1,
+						q: query,
+						safeSearch: 'strict', // Dont want users playing 18+ vids
+						order: 'relevance',
+						videoDuration: 'medium', // Can be changed to short, medium or long, i set it to medium so users couldnt play music over 20mins 
+						key: "Google api key"
+					});
+				if (!body.items.length) return message.channel.send('No results found for ' + query + ".");
+				let url = `https://www.youtube.com/watch?v=${body.items[0].id.videoId}`
+				yt.getInfo(url, ['-q', '--no-warnings', '--force-ipv4'], (err, info) => {
+					if (err) return message.channel.send('Invalid YouTube Link: ' + err);
+					if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+					queue[message.guild.id].songs.push({
+						url: url,
+						title: info.title,
+						requester: message.author.username
+					});
+					info
+					msg.edit(`Added **${info.title}** to the queue`);
 				});
-			if (!body.items.length) return message.channel.send('No results found for ' + query + ".");
-			let url = `https://www.youtube.com/watch?v=${body.items[0].id.videoId}`
-			yt.getInfo(url, ['-q', '--no-warnings', '--force-ipv4'], (err, info) => {
-				if (err) return message.channel.send('Invalid YouTube Link: ' + err);
-				if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-				queue[message.guild.id].songs.push({
-					url: url,
-					title: info.title,
-					requester: message.author.username
-				});
-				info
-				msg.edit(`Added **${info.title}** to the queue`);
-			});
+			}
 		}
-	}
 
 		if (command === "join") {
 			return new Promise((resolve, reject) => {
@@ -167,7 +177,7 @@ client.on("message", async (message) => {
 		}
 
 		if (command === "clearqueue") {
-                   if (queue === {}) return message.channel.send('Queue is empty, have no songs to remove.');
+			if (queue === {}) return message.channel.send('Queue is empty, have no songs to remove.');
 			const voiceChannel = message.member.voiceChannel;
 			if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t leave your voice channel...');
 			queue[message.guild.id] = {};
@@ -190,14 +200,39 @@ client.on("message", async (message) => {
 			message.channel.send('Current song has been skipped.')
 			dispatcher.end();
 		}
+
 		if (command === "volume") {
 			const volumetoset = parseInt(args.join(""))
 			if (volumetoset > 200 || volumetoset < 0) return message.channel.send('Volume out of range!').then((response) => {
 				response.delete(5000);
-		    });
+			});
 			if (isNaN(volumetoset)) return message.channel.send("Need to provide a valid number.")
-			dispatcher.setVolume(volumetoset/100);
+			dispatcher.setVolume(volumetoset / 100);
 			message.channel.send(`Volume now set too: ${volumetoset}%`);
+		}
+
+		if (command === "prefix") {
+			if (!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("You are missing MANAGE_GUILD permission");
+			const newprefix = args[0]
+			const newprefixfix = newprefix.replace(/[^\x00-\x7F]/g, "");
+			if (newprefix.length < 1) return message.channel.send("Didn't provide a new prefix to set")
+			if (newprefixfix.length < 1) return message.channel.send("Prefix can't have ascii characters")
+			if (newprefix.length > 7) return message.channel.send("prefix can't be longer then 7 characters")
+			sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(row => {
+				sql.run(`UPDATE scores SET prefix = "${newprefixfix}"1} WHERE guildId = ${message.guild.id}`);
+				message.channel.send("I have set the new guild prefix to " + newprefix)
+				let modlog = message.guild.channels.find('name', logschannel);
+				const embed = new Discord.RichEmbed()
+					.setColor(0x738BD7)
+					.setTitle("Action: Prefix Change")
+					.addField("Moderator", message.author.tag + " (ID: " + message.author.id + ")")
+					.addField("New prefix", newprefixfix, true)
+					.setFooter("Time used: " + message.createdAt.toDateString())
+				if (!modlog) return;
+				return client.channels.get(modlog.id).send({
+					embed
+				});
+			})
 		}
 	})
 });
