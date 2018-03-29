@@ -145,7 +145,6 @@ client.on("message", async (message) => {
 						title: info.title,
 						requester: message.author.username
 					});
-					info
 					msg.edit(`Added **${info.title}** to the queue`);
 				});
 			}
