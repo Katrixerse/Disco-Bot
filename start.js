@@ -5,13 +5,14 @@ const sql = require("sqlite");
 sql.open("./assets/guildsettings.sqlite");
 const client = new Discord.Client();
 const logschannel = "mod-logs" // change this too the logs channel you want to use.
+
 let dispatcher;
+
+let queue = {};
 
 if (Number(process.version.slice(1).split(".")[0]) < 8) {
 	console.log("Node 8.0.0 or higher is required. Update Node on your system.");
 }
-
-let queue = {};
 
 client.on('uncaughtException', (err) => {
 	console.log("error", "Uncaught Exception", err);
@@ -228,7 +229,6 @@ client.on("message", async (message) => {
 		if (command === "prefix") {
 			if (!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("You are missing MANAGE_GUILD permission");
 			const newprefix = args[0]
-	
 			if (newprefix.length < 1) return message.channel.send("Didn't provide a new prefix to set")
 			var asciic = /[^\x00-\x7F]/g;
 			const result = asciic.test(newprefix)
