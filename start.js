@@ -133,7 +133,7 @@ client.on("message", async (message) => {
 						safeSearch: 'strict', // Dont want users playing 18+ vids
 						order: 'relevance',
 						videoDuration: 'medium', // Can be changed to short, medium or long, i set it to medium so users couldnt play music over 20mins 
-						key: "Google api key"
+						key: "Youtube api key can get one at: https://console.developers.google.com/apis"
 					});
 				if (!body.items.length) return message.channel.send('No results found for ' + query + ".");
 				let url = `https://www.youtube.com/watch?v=${body.items[0].id.videoId}`
@@ -252,4 +252,4 @@ client.on("message", async (message) => {
 	})
 });
 
-client.login("Your token");
+client.login("Your bots token"); // Dont share this with anyone
