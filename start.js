@@ -228,7 +228,7 @@ client.on("message", async (message) => {
 		if (command === "prefix") {
 			if (!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("You are missing MANAGE_GUILD permission");
 			const newprefix = args[0]
-			const newprefixfix = newprefix.replace(/[^\x00-\x7F]/g, "");
+	
 			if (newprefix.length < 1) return message.channel.send("Didn't provide a new prefix to set")
 			var asciic = /[^\x00-\x7F]/g;
 			const result = asciic.test(newprefix)
