@@ -16,6 +16,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 8) {
 
 client.on('uncaughtException', (err) => {
 	console.log("error", "Uncaught Exception", err);
+	process.exit(1)
 });
 
 process.on("unhandledRejection", (err) => {
