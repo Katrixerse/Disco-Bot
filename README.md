@@ -18,7 +18,6 @@ Packages Needed
 
 - discord.js
 - ytdl-core
-- sqlite
 - ffmpeg
 
 When done downloading the dependencies, run node start.js, if you don't want the level and gamble system then just run hammy.js, each one needs its own command prompt to run, to start the bot.
