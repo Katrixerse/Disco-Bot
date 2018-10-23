@@ -4,7 +4,6 @@ const snekfetch = require('snekfetch');
 const sql = require("sqlite");
 sql.open("./assets/guildsettings.sqlite");
 const client = new Discord.Client();
-const logschannel = "mod-logs" // change this too the logs channel you want to use.
 const config = require('./config.json');
 
 let dispatcher;
@@ -238,7 +237,7 @@ client.on("message", async (message) => {
 			sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(row => {
 				sql.run(`UPDATE scores SET prefix = "${newprefixfix}" WHERE guildId = ${message.guild.id}`);
 				message.channel.send("I have set the new guild prefix to " + newprefix)
-				let modlog = message.guild.channels.find('name', logschannel);
+				let modlog = message.guild.channels.find(n => n.name == row.logs);
 				const embed = new Discord.RichEmbed()
 					.setColor(0x738BD7)
 					.setTitle("Action: Prefix Change")
