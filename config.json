@@ -1,5 +1,5 @@
 {
   "token": "Your token here",
   "key": "Youtube api key can get one at: https://console.developers.google.com/apis",
-  "passes": "1" //Can be increased to reduce packetloss but will use more bandwidth. 
+  "passes": 1 //Can be increased to reduce packetloss but will use more bandwidth. 
 }
