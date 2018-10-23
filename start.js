@@ -252,4 +252,4 @@ client.on("message", async (message) => {
 	})
 });
 
-client.login("Your bots token"); // Dont share this with anyone
+client.login(config.token); // Dont share this with anyone
