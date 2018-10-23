@@ -90,7 +90,7 @@ client.on("message", async (message) => {
 					audioonly: true
 				}), {
 					seek: 0,
-					passes: 1, // Can be increased to reduce packetloss.
+					passes: config.passes,
 					bitrate: 'auto',
 					quality: 'highestaudio'
 				});
@@ -133,8 +133,7 @@ client.on("message", async (message) => {
 						q: query,
 						safeSearch: 'strict', // Dont want users playing 18+ vids
 						order: 'relevance',
-						videoDuration: 'medium', // Can be changed to short, medium or long, i set it to medium so users couldnt play music over 20mins 
-						key: "Youtube api key can get one at: https://console.developers.google.com/apis"
+						key: config.key
 					});
 				if (!body.items.length) return message.channel.send('No results found for ' + query + ".");
 				let url = `https://www.youtube.com/watch?v=${body.items[0].id.videoId}`
