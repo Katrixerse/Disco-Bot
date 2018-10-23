@@ -21,7 +21,7 @@ Packages Needed
 - sqlite
 - ffmpeg
 
-When done downloading the dependencies, run node start.js, if you don't want the level and gamble system then just run hammy.js, each one needs its own command prompt to run, to start the bot.
+When done downloading the dependencies, run node start.js.
 
 If there is a problem or an error please make an issue.
 
