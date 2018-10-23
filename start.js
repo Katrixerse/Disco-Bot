@@ -5,6 +5,7 @@ const sql = require("sqlite");
 sql.open("./assets/guildsettings.sqlite");
 const client = new Discord.Client();
 const logschannel = "mod-logs" // change this too the logs channel you want to use.
+const config = require('./config.json');
 
 let dispatcher;
 
