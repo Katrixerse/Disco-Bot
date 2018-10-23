@@ -19,7 +19,10 @@ Packages Needed
 - discord.js
 - ytdl-core
 - sqlite
-- ffmpeg
+- ffmpeg-binaries
+- windows-build-tools // this one needs an admin command prompt or powershell to install and this one will take some time.
+- node-gyp
+- node-opus or opusscript
 
 When done downloading the dependencies, run node start.js.
 
