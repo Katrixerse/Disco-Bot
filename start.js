@@ -43,12 +43,12 @@ client.on("guildCreate", guild => {
 
 	sql.get(`SELECT * FROM scores WHERE guildId ="${guild.id}"`).then(row => {
 		if (!row) {
-			sql.run("INSERT INTO scores (guildId, prefix) VALUES (?, ?)", [guild.id, ">"]);
+			sql.run("INSERT INTO guild_settings (guildId, prefix, logs) VALUES (?, ?, ?)", [message.author.id, ">", "mod-logs"]);
 		}
 	}).catch(() => {
 		console.error;
-		sql.run("CREATE TABLE IF NOT EXISTS scores (guildId TEXT, prefix TEXT)").then(() => {
-			sql.run("INSERT INTO scores (guildId, prefix) VALUES (?, ?)", [message.author.id, ">"]);
+		sql.run("CREATE TABLE IF NOT EXISTS guild_settings (guildId TEXT, prefix TEXT, logs)").then(() => {
+			sql.run("INSERT INTO guild_settings (guildId, prefix, logs) VALUES (?, ?, ?)", [message.author.id, ">", "mod-logs"]);
 		});
 	});
 });
@@ -60,7 +60,7 @@ client.on("message", async (message) => {
 	if (!message.guild.member(client.user).hasPermission('VIEW_CHANNEL')) return;
 
 
-	sql.get(`SELECT * FROM scores WHERE guildId ="${message.guild.id}"`).then(async (row) => {
+	sql.get(`SELECT * FROM guild_settings WHERE guildId ="${message.guild.id}"`).then(async (row) => {
 		if (!row) return;
 
 		const prefix = row.prefix
