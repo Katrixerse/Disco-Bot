@@ -28,4 +28,4 @@ When done downloading the dependencies, run node start.js.
 
 If there is a problem or an error please make an issue.
 
-If you want to run this bot while not having the console or terminal open, use nodemon or pm2 (ex. pm2 start hammy.js)
+If you want to run this bot while not having the console or terminal open, use pm2 can install using npm install -g pm2 (ex. pm2 start start.js)
